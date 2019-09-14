@@ -10,9 +10,9 @@
 #define PUMP3 7       //oil PUMP3
 #define PUMP4 8       //oil PUMP4
 #define PUMP5 12      //water PUMP1
-#define HUMIDIFIER 1  //가습기 모듈
+#define HUMIDIFIER 13 //가습기 모듈
 #define LightSensor 6 //광측센서
-int Weathertem;
+int Weatherdump;
 int maxCalls = 10;
 int calls = 0;
 int Light = 0;
@@ -98,73 +98,189 @@ void runGetForecastByCoordinates()
         case 'c':
           if (!data.compareTo("clear"))
           {
-            //	"clear": "맑음",
+            Sunny(); //	"clear": "맑음",
           }
           else
             wearherDataError();
           break;
+        case 'd':
+          if (!data.compareTo("dry"))
+            Sunny();
+          else
+            wearherDataError();
         case 'f':
           if (!data.compareTo("fog"))
-          {
-            //"fog": "안개",
-          }
+            Cloudy(); //"fog": "안개",
           else
             wearherDataError();
           break;
         case 'h':
-          if (!data.compareTo("heavy-sleet"))
+          Weatherdump = data.compareTo("heavy-sleet");
+          if (!Weatherdump)
+            Rain(); //"heavy-sleet": "강한 진눈깨비",
+          else if (Weatherdump < 0)
           {
-            //"heavy-sleet": "강한 진눈깨비",
+            Weatherdump = data.compareTo("heavy-precipitation");
+            if (!Weatherdump)
+              Rain(); //    "heavy-precipitation": "강한 강수",
+            else if (Weatherdump < 0 && !data.compareTo("heavy-clouds"))
+              Cloudy(); //    "heavy-clouds": "흐림",
+            else if (!data.compareTo("heavy-sleet"))
+              Rain(); //       "heavy-sleet": "강한 진눈깨비",
+            else
+              wearherDataError();
           }
-          else if (data.compareTo)
-            break;
+          else
+          {
+            Weatherdump = data.compareTo("heavy-wind");
+            if (!Weatherdump)
+              Cloudy(); //"heavy-wind": "강한 바람",
+            else if (Weatherdump < 0 && !data.compareTo("heavy-snow"))
+              Rain(); //"heavy-snow": "강한 눈",
+            else if (!data.compareTo("high-humidity"))
+            {
+              //"high-humidity": "습함",
+            }
+            else
+              wearherDataError();
+          }
+          break;
         case 'l':
+          Weatherdump = data.compareTo % ("light-sleet");
+          if (!Weatherdump)
+            Rain(); //"light-sleet": "약한 진눈깨비",
+          else if (Weatherdump < 0)
+          {
+            Weatherdump = data.compareTo("light-precipitation");
+            if (!Weatherdump)
+              Rain(); //"light-precipitation": "약한 강수",
+            else if (Weatherdump < 0 && !data.compareTo("light-clouds"))
+              Cloudy(); //"light-clouds": "약간 흐림",
+            else if (!data.compareTo("light-rain"))
+              Rain(); //"light-rain": "약한 비",
+            else
+              wearherDataError()
+          }
+          else
+          {
+            Weatherdump = data.compareTo("light-wind");
+            if (!Weatherdump)
+              Sunny(); //"light-wind": "약한 바람",
+            else if (Weatherdump < 0 && !data.compareTo("light-snow"))
+              Rain(); //"light-snow": "약한 눈",
+            else if (!data.compareTo("low-humidity"))
+              Sunny(); // "low-humidity": "건조",
+            else
+              wearherDataError();
+          }
           break;
         case 'm':
+          Weatherdump = data.compareTo("medium-sleet");
+          if (!Weatherdump)
+            Rain(); //"medium-sleet": "진눈깨비",
+          if (Weatherdump < 0)
+          {
+            Weatherdump = data.compareTo("medium-precipitation");
+            if (!Weatherdump)
+              Rain(); //"medium-precipitation": "강수",
+            else if (Weatherdump < 0 && !data.compareTo("medium-clouds"))
+              Cloudy(); //    "medium-clouds": "흐림",
+            else if (!data.compareTo("medium-rain"))
+              Rain(); //"medium-rain": "비",
+            else
+              wearherDataError();
+          }
+          else
+          {
+            Weatherdump = data.compareTo("medium-wind");
+            if (!Weatherdump)
+            {
+              Cloudy();
+              //  "medium-wind": "바람",
+            }
+            else if (Weatherdump < 0 && !data.compareTo("medium-snow"))
+              Rain(); //"medium-snow": "눈",
+            else if (!data.compareTo("mixed-precipitation"))
+              Rain(); // "mixed-precipitation": "진눈깨비",
+            else
+              wearherDataError();
+          }
           break;
         case 'n':
           if (!data.compareTo("no-precipitation"))
           {
-            // "no-precipitation": "강수 없음",
+            Sunny(); // "no-precipitation": "강수 없음",
           }
           else
             wearherDataError();
           break;
         case 'p':
+          Weatherdump = data.compareTo("possible-thunderstorm");
+          if (!Weatherdump)
+            Rain(); //"possible-thunderstorm": "뇌우 가능성",
+          else if (Weatherdump < 0)
+          {
+            Weatherdump = data.compareTo("possible-light-sleet");
+            if (!Weatherdump)
+              Rain(); // "possible-light-sleet": "약한 진눈깨비 가능성",
+            else if (Weatherdump < 0)
+            {
+              if (!data.compareTo("possible-light-precipitation"))
+                Rain(); //"possible-light-precipitation": "약한 강수 가능성",
+              else if (!data.compareTo("possible-light-rain"))
+                Rain(); //"possible-light-rain": "가랑비 가능성",
+              else
+                wearherDataError();
+            }
+            else if (!data.compareTo("possible-light-snow"))
+              Rain(); //"possible-light-snow": "약한 눈 가능성",
+            else
+              wearherDataError();
+          }
+          else
+          {
+            Weatherdump - data.compareTo("possible-very-light-sleet");
+            if (!Weatherdump)
+              Rain(); // "possible-very-light-sleet": "아주 약한 진눈깨비 가능성",
+            else if (Weatherdump < 0)
+            {
+              if (!data.compareTo("possible-very-light-precipitation"))
+                Rain(); //  "possible-very-light-precipitation": "아주 약한 강수 가능성",
+              else if (!data.compareTo("possible-very-light-rain"))
+                Rain(); // "possible-very-light-rain": "이슬비 가능성",
+              else
+                wearherDataError();
+            }
+            else if (!data.compareTo("possible-very-light-snow"))
+              Rain(); //  "possible-very-light-snow": "흩뿌리는 눈 가능성",
+            else
+              wearherDataError();
+          }
           break;
         case 't':
           if (!data.compareTo("thunderstorm"))
-          {
-            //"thunderstorm": "뇌우",
-          }
+            Rain(); //"thunderstorm": "뇌우",
           else
             wearherDataError();
-        }
-        if (data == "dry" || data == "breezy" || data == "no precipitation" || data == "clear")
-        {
-          Weather0 = 1; //Sunny
-          Serial.print("Sunny=");
-          Serial.println(Weather0);
-          Sunny();
-        }
-        else if (data == "overcast" || data == "mostly cloudy" || data == "partly cloudy" || data == "foggy" || data == "humid" || data == "dangerously windy" || data == "windy" || data == "mixed precipitation")
-        {
-          Weather0 = 2; //Cloudy
-          Serial.print("Cloudy=");
-          Serial.println(Weather0);
-          Cloudy();
-        }
-        else if (data == "rain" || data == "light rain" || data == "possible light rain" || data == "drizzle" || data == "possible drizzle" || data == "thunderstorms" || data == "possible thunderstorms" || data == "heavy snow" || data == "snow" ||
-                 data == "light snow" || data == "possible light snow" || data == "flurries" || data == "possible flurries" || data == "heavy sleet" || data == "sleet" || data == "light sleet" || data == "possible light precipitation" || data == "possible light sleet" ||
-                 data == "light precipitation" || data == "possible light precipitation" || data == "light precipitation" || data == "precipitation" || data == "heavy precipitation")
-        {
-          Weather0 = 3; //Rain
-          Serial.print("Rain=");
-          Serial.println(Weather0);
-          Rain();
-        }
-        else
-        {
+        case 'v':
+          Weatherdump = data.compareTo("very-light-rain");
+          if (!Weatherdump)
+            Rain(); //"very-light-rain": "이슬비",
+          else if (Weatherdump > 0)
+          {
+            if (!data.compareTo("very-light-sleet"))
+              Rain(); // "very-light-sleet": "아주 약한 진눈깨비",
+            else if (!data.compareTo("very-light-snow"))
+              Rain(); //"very-light-snow": "아주 약한 눈"
+            else
+              wearherDataError();
+          }
+          else if (!data.compareTo("very-light-precipitation"))
+            Rain(); //"very-light-precipitation": "아주 약한 강수",
+          else
+            wearherDataError();
+          break;
+        default:
           wearherDataError();
         }
       }
@@ -176,6 +292,7 @@ void runGetForecastByCoordinates()
 ///////////////////////////////////////////////////////////////////////////////////
 void Sunny()
 {
+  Weather0 = 1; //Sunny
   Serial.println("Sunny");
   digitalWrite(PUMP1, HIGH);
   delay(5000);
@@ -221,6 +338,7 @@ void Sunny()
 
 void Cloudy()
 {
+  Weather0 = 2; //Cloudy
   Serial.println("Cloudy");
   digitalWrite(PUMP2, HIGH);
   delay(5000);
@@ -266,6 +384,7 @@ void Cloudy()
 ///////////////////////////////////////////////////////////////////////////////////
 void Rain()
 {
+  Weather0 = 3; //Rain
   Serial.println("Rain");
   digitalWrite(PUMP3, HIGH);
   delay(5000);
