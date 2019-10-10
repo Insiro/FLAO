@@ -74,15 +74,17 @@ void runGetForecastByCoordinates()
   GetForecastByCoordinatesChoreo.addInput("Longitude", "127.0016985");
   GetForecastByCoordinatesChoreo.addInput("Units", "si");
   GetForecastByCoordinatesChoreo.setChoreo("/Library/DarkSky/GetForecastByCoordinates");
-
+  /**
   for (int j = 0; j < 10; j++)
   {
     Light = analogRead(LightSensor);
     Serial.print("Light");
     Serial.println(Light);
   }
-
+  **/
   unsigned int returnCode = GetForecastByCoordinatesChoreo.run();
+  Serial.println(GetForecastByCoordinatesChoreo.run());
+  Serial.println(GetForecastByCoordinatesChoreo.readStringUntil('\x1F'));
   if (returnCode == 0)
   {
     while (GetForecastByCoordinatesChoreo.available())
@@ -146,7 +148,7 @@ void runGetForecastByCoordinates()
           }
           break;
         case 'l':
-          Weatherdump = data.compareTo % ("light-sleet");
+          Weatherdump = data.compareTo("light-sleet");
           if (!Weatherdump)
             Rain(); //"light-sleet": "약한 진눈깨비",
           else if (Weatherdump < 0)
@@ -159,7 +161,7 @@ void runGetForecastByCoordinates()
             else if (!data.compareTo("light-rain"))
               Rain(); //"light-rain": "약한 비",
             else
-              wearherDataError()
+              wearherDataError();
           }
           else
           {
