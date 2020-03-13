@@ -69,7 +69,7 @@ void runGetForecastByCoordinates()
   GetForecastByCoordinatesChoreo.setAccountName(TEMBOO_ACCOUNT);
   GetForecastByCoordinatesChoreo.setAppKeyName(TEMBOO_APP_KEY_NAME);
   GetForecastByCoordinatesChoreo.setAppKey(TEMBOO_APP_KEY);
-  GetForecastByCoordinatesChoreo.addInput("APIKey", "885e13b31d6091898c992ca562403711");
+  GetForecastByCoordinatesChoreo.addInput("APIKey", "APIkeyline");
   GetForecastByCoordinatesChoreo.addInput("Latitude", "37.5642135");
   GetForecastByCoordinatesChoreo.addInput("Longitude", "127.0016985");
   GetForecastByCoordinatesChoreo.addInput("Units", "si");
